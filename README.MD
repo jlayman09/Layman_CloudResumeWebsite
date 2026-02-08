@@ -79,7 +79,7 @@ It complements my background in **cybersecurity education** and my transition in
 ## About Me
 
 **Jonathan Layman**  
-Cybersecurity Educator | AWS | Cloud & Security  
+Cybersecurity Educator | AWS | Cloud Security  
 📍 San Antonio, TX  
 
 - CompTIA Network+  
