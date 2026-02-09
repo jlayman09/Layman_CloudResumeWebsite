@@ -80,15 +80,11 @@
 							CloudFront, ensuring encrypted traffic and modern web security standards.  Once CloudFront is in place, I'll configure a custom domain and DNS routing using Amazon Route 53, 
 							pointing my personal domain directly to the CloudFront distribution. This step completes the transition from a basic static site to a secure, globally distributed web 
 							presence—mirroring real-world cloud deployment practices.  This milestone marks the official “go-live” moment for my site.</p>
-						<h3>Phase 3: Securing The Site with AWS CloudFront</h3>
-						<p>After the site is live and secure, I'll move into building a fully serverless back end to support a real-time visitor counter.  This project will integrate front-end JavaScript 
-							with AWS managed services:  
-							A JavaScript component on the site to track page visits 
-							A DynamoDB table to persist visitor counts
-							An API Gateway + AWS Lambda (Python) backend to securely handle requests between the website and the database
-							
-							The goal is to design a lightweight, scalable, and cost-efficient architecture that demonstrates event-driven, serverless application design—one of the core patterns used in 
-							modern cloud environments.  This project bridges front-end development, cloud infrastructure, and back-end logic into a single cohesive system.</p>
+						<h3>Phase 3: Securing the Site with AWS CloudFront</h3>
+						<p>This phase focuses on hardening the website by placing it behind Amazon CloudFront. I configured a global CDN in front of the S3 static site to enforce HTTPS, improve 
+							performance, and add an additional security layer. This involved setting up SSL certificates, configuring origin access controls, updating DNS records, and handling 
+							redirects to ensure all traffic is encrypted and routed correctly. The result is a faster, more secure, and production-ready website that follows real-world cloud 
+							security best practices.</p>
 					</section>
 				</article>
 			<!-- Post -->
