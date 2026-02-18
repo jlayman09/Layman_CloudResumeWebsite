@@ -1531,6 +1531,16 @@ input, select, textarea {
 .project .image.featured {
     margin-bottom: 32px;
 }
+
+/* Make project images responsive */
+.project img {
+	width: 100%;
+	max-height: 341px;
+	height: auto;
+	display: block;
+	object-fit: cover;
+}
+
 /* Project paragraphs: indent first line */
 .project p {
     text-indent: 1.5em;
