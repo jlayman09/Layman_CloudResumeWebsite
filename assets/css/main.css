@@ -204,7 +204,7 @@ input, select, textarea {
 	.container {
 		margin: 0 auto;
 		max-width: 100%;
-		width: 70em;
+		width: 68em;
 	}
 
 		@media screen and (max-width: 1680px) {
