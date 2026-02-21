@@ -3,16 +3,31 @@ const API_URL = "/api/visitor";
 
 async function initVisitorCounter() {
   try {
-    const response = await fetch(API_URL, { method: "GET" });
+    let data;
 
-    if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}`);
+    // Only increment once per session
+    if (!sessionStorage.getItem("visited")) {
+      const response = await fetch(API_URL, { method: "GET" });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      data = await response.json();
+      sessionStorage.setItem("visited", "true");
+    } else {
+      // If already visited this session, just fetch without increment logic change
+      const response = await fetch(API_URL, { method: "GET" });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      data = await response.json();
     }
 
-    const data = await response.json();
-    const visitCount = Number(data.views ?? 0);
+    updateCounterDisplay(Number(data.views ?? 0));
 
-    updateCounterDisplay(visitCount);
   } catch (error) {
     console.error("Error updating visitor counter:", error);
     updateCounterDisplay(0);
