@@ -25,12 +25,12 @@
 										<a href="#" class="icon solid fa-tasks"><span>Projects</span></a>
 										<ul>
 											<li><a href="Project.html">Cloud Challenge</a></li>
-											<li><a href="#">VS Code Workflow</a></li>
-											<li><a href="#">AWS S3 Hosting</a></li>
-											<li><a href="#">Route 53 Domain</a></li>
-											<li><a href="#">CLoudFront HTTPS</a></li>
-											<li><a href="#">GitHub CI/CD</a></li>
-											<li><a href="#">Cost Optimization</a></li>
+											<li><a href="project_vscode.html">VS Code Workflow</a></li>
+											<li><a href="project_awss3hosting.html">AWS S3 Hosting</a></li>
+											<li><a href="project_route53.html">Route 53 Domain</a></li>
+											<li><a href="project_cloudfront.html">CLoudFront HTTPS</a></li>
+											<li><a href="project_github.html">GitHub CI/CD</a></li>
+											<li><a href="project_costoptimization.html">Cost Optimization</a></li>
 										</ul>
 									</li>
 									<li><a class="icon solid fa-user-tie" href="resume.html"><span>Resume</span></a></li>
@@ -46,14 +46,95 @@
 				<article class="post">
 					<header>
 						<div class="title">
-							<h2>Uploading our Static Site to AWS S3</h2>
+							<h2>Moving to the Cloud with Amazon S3 Hosting</h2>
 							<p>Part 2 of the AWS Cloud Resume Challenge</p>
 							<time class="published">January 28, 2026</time>
 						</div>
 					</header>
 					<section class="project">
 						<a href="Project.html" class="image featured"><img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" /></a>
-						<p>Future Writeup Coming</p>
+						<p>In my last post, we hung out and talked about setting up your workspace—getting VS Code ready and brushing up on those HTML and CSS skills. It's fun building a resume that 
+							actually looks like you, right? But let's be real: a website stuck on your laptop isn't going to get you hired.</p>
+
+						<p>To make this thing official, you've got to get those files off your computer and into the cloud. For Phase 2 of the Cloud Resume Challenge, we're moving everything over to 
+							Amazon S3.</p>
+
+						<h3>Wait, what's an S3?</h3>
+						<p>If you're new to the AWS world, just think of Amazon S3 (Simple Storage Service) as a super-reliable hard drive in the sky. Sure, people use it to store photos or backups, but 
+							it has a cool trick called "Static Website Hosting."</p>
+
+						<p>Basically, S3 can serve your HTML and CSS directly to a browser without you needing to run a fancy web server 24/7. It's cheap, it's fast, and it's the perfect way to kick off a 
+							serverless project!</p>
+
+						<h3>Step-by-Step: Getting Your Site Live</h3>
+						<p>Look, I know we're going to automate all of this with Terraform later, but trust me—do it manually in the AWS Console first. It's way better to see exactly which "knobs" you're 
+							turning before you let code do the heavy lifting for you.</p>
+
+						<h4>1. Making Your Primary Bucket</h4>
+						<p>First up, you need a "container" for your files.</p>
+						<ul>
+							<li><strong>Bucket Name:</strong> Name this exactly what you want your domain to be (like jonathanlayman.com).</li>
+							<li><strong>Region:</strong> Pick somewhere close to home. I went with us-east-1 (N. Virginia) to keep things snappy.</li>
+							<li><strong>Public Access:</strong> Heads up! By default, AWS blocks all public access. Since this is a public website, you've got to uncheck that box. AWS will give you a little 
+								warning, but don't worry, it's supposed to be open to the world!</li>
+						</ul>
+
+						<h4>2. Flipping the "Website" Switch</h4>
+						<p>Just tossing files into a bucket doesn't magically make it a website. Head over to the Properties tab:</p>
+						<ul>
+							<li>Scroll all the way down to <strong>Static website hosting</strong>.</li>
+							<li>Hit <strong>Edit</strong> and then <strong>Enable</strong>.</li>
+							<li>Set your <strong>Index document</strong> to <code>index.html</code>. This tells S3, "Hey, when someone visits, show them this file first!"</li>
+						</ul>
+
+						<h4>3. Tossing in Your Files</h4>
+						<p>Now for the easy part! Just drag and drop your <code>index.html</code> and <code>style.css</code> files straight into the S3 console. No need to mess with the command line (CLI) 
+							just yet. We just want to see your hard work live in a browser.</p>
+
+						<h4>4. The Permission Puzzle (The "Bucket Policy")</h4>
+						<p>Here's the catch: even with public access "unblocked," S3 is still a bit shy. It won't show your files until you give it a specific "okay." Go to the Permissions tab and paste in 
+							this JSON policy.</p>
+						<p>It basically tells AWS: "It's cool, let anyone on the internet look at the files in this specific bucket."</p>
+
+						<pre><code>
+						{
+   						"Version": "2012-10-17",
+    						"Statement": [
+        					{
+           					"Sid": "PublicReadGetObject",
+            					"Effect": "Allow", 
+            					"Action": "s3:GetObject",
+            					"Resource": "arn:aws:s3:::jonathanlayman.com/*"
+    		    				}
+   		 			]						
+				}</code></pre>
+
+						<strong>Quick tip:</strong> Don't forget to swap out <code>jonathanlayman.com</code> with your actual bucket name!
+
+						<h3>Handling the "www" Redirect</h3>
+						Ever notice how some people type www and some don't? To make sure everyone finds you, you actually need a second bucket.
+						<ul>
+							<li><strong>Make Bucket #2:</strong> Name it <code>www.jonathanlayman.com</code>.</li>
+							<li><strong>Set up the Redirect:</strong> In the Properties tab for this new bucket, go back to Static website hosting.</li>
+							<li><strong>The Trick:</strong> Instead of "Host a static website," pick <strong>Redirect requests for an object</strong>.</li>
+							<li><strong>The Goal:</strong> Tell it to send everyone to your main domain (jonathanlayman.com) using <code>https</code>.</li>
+						</ul>
+						Boom! Now no matter how they type your address, they'll end up in the right spot.
+
+						<h3>Watch Out for the "Access Denied" Wall</h3>
+						Don't panic if you see a "403 Forbidden" error. It happens to the best of us! It's usually just a tiny typo in your bucket policy. If you hit that wall, 
+							just double-check your code. Once you nail it, seeing your resume pop up at that long AWS URL feels like a total win.
+
+						<h3>Lessons Learned</h3>
+						<ul>
+							<li><strong>Permissions Rule Everything:</strong> In the cloud, "Access Denied" just means the security is doing its job. Learning how these policies work is a huge part of 
+								the journey.</li>
+							<li><strong>We're Just Getting Started:</strong> Right now, the site is "out there," but it's not super secure (it's HTTP, not HTTPS) and the URL is kind of a mess.</li>
+						</ul>
+
+						In the next post, we're diving into Route 53 and CloudFront to get that professional domain and the security your resume deserves. See you there!
+						</br>
+						<strong>Next Up:</strong> <a href="project_route53.html">Route 53: Claiming My Corner of the Internet</a>
 					</section>
 				</article>
 			<!-- Post -->

@@ -46,47 +46,89 @@
 				<article class="post">
 					<header>
 						<div class="title">
-							<h2><a href="Project.html">The Project: AWS Cloud Resume Challenge</a></h2>
-							<p>AWS Serverless Portfolio: Engineering a full-stack CI/CD pipeline with IaC.</p>
+							<h2><a href="Project.html">My Journey to the Cloud</a></h2>
+							<p>My Journey through the AWS Cloud Resume Challenge.</p>
 							<time class="published">January 28, 2026</time>
 						</div>
 					</header>
 					<section class="project">
-						<img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" /></br>
-						<p>The Cloud Resume Challenge is much more than a digital resume; it is a rigorous, sixteen-step project specification designed to bridge the 
-							gap between "learning" and "doing". Instead of following a step-by-step tutorial, I am building a full-stack, serverless application based 
-							on a professional project spec that requires me to solve complex architectural problems independently.</p>
-							<h3><strong>My Project Objectives</strong></h3>
-					<ul>
-							<li><strong>Bridge My Skillset</strong>: Leveraging my experience as an Intel Analyst and educator to master the "engineered prints" of cloud architecture.</li>
+						<img src="images/JourneyToCloud.png" width="840" height="341" alt="My Journey to the Cloud Image" /></br>
+						<p>Most of the time, learning tech feels like trying to put together a puzzle without seeing the picture on the box. You learn 
+							a bit of Python here or a bit of networking there, but you rarely get to see the whole "big picture" of how a single click 
+							on a browser travels across the globe to a database in some far-off data center.</p> 
+							
+							<p>That's exactly why I decided to tackle the AWS version of the <a href="https://cloudresumechallenge.dev/docs/the-challenge/aws/" target="_blank" rel="noopener">Cloud Resume Challenge</a>. Created by Forrest Brazeal, this isn't 
+							just another "follow-the-leader" tutorial; it's a total baptism by fire. It forced me to stop thinking about things in question 
+							and answer format and to actually create something that was long lasting and useful to me.  While I did use the challenge steps as a 
+							rough guide, the steps I ended up taking were a bit different, but I feel I still ended up at the same destination.  Anyways, this post is a map of that journey, from 
+							my first messy manual steps to a fully automated system I built myself.</p>
 
-							<li><strong>Master Serverless Architecture</strong>: Building a cost-effective, scalable API using AWS Lambda, API Gateway, and DynamoDB.</li>
+						<h3>The Project Roadmap</h3>
+						I've broken my documentation into five distinct phases. If you're looking for the "how-to" behind the high-level concepts, the links 
+							below will take you to my detailed, service-by-service breakdowns.
+						<ul>
+								<li><strong>Phase 1: Building the Foundation (Jan 28)</strong><br>
+									Before I could even think about the cloud, I had to get my own house in order. This phase wasn't about complex automation 
+									yet; it was about getting comfortable with the tools of the trade. I spent this time learning how to navigate Visual Studio 
+									Code, moving away from basic text editors to a setup that actually felt professional. The real challenge here was a deep 
+									dive back into HTML and CSS. I had to relearn the building blocks of the web, experimenting with different designs and 
+									merging elements from various sites until I found a look that felt cohesive and, more importantly, felt like me.  
+								</br><strong>Detailed Guide: <a href="project_vscode.html">VS Code Workflow</a></strong>
+								</li>
+								<li><strong>Phase 2: Going Live Globally (Jan 30 - Feb 4)</strong><br>
+									The goal here was simple: put my resume online. The execution, however, was a lesson in global networking. I used Amazon S3 
+									to host the static files, but a bare bucket isn't secure or fast enough for a professional site. I then moved into the 
+									networking side of AWS, using Route 53 to manage my custom domain and wrapping the whole site in Amazon CloudFront. This wasn't 
+									just about speed; it was a deep dive into how HTTPS and SSL certificates actually work to keep a site secure.  
+									</br><strong>Detailed Guides: <a href="project_awss3hosting.html">AWS S3 Hosting</a> | <a href="project_route53.html">Route 53 Domain</a> | 
+									<a href="project_cloudfront.html">CloudFront HTTPS</a></strong>
+								</li>
+								</li>
+								<li><strong>Phase 3: CI/CD & Cloud Hygiene (Feb 8 - Feb 14)</strong><br>
+									In the professional world, you don't manually upload files; you use a pipeline. I set up GitHub Actions so that every time I 
+									save my code, it automatically runs my tests and deploys itself to AWS. I also took a hard look at the "Cloud Hygiene" of my 
+									project-setting up AWS Budgets and monitoring to ensure my cloud journey didn't result in a surprise bill.  
+									</br><strong>Detailed Guides: <a href="project_github.html">GitHub CI/CD</a> | <a href="project_costoptimization.html">Cost Optimization</a></strong>
+								</li>
+								<li><strong>Phase 4: The Serverless Back-End & Integration (Feb 15 - Feb 23)</strong><br>
+									This is where the "magic" happens—and where the real frustration began. I needed a way to track visitors without running a 
+									traditional server. I built a serverless stack using DynamoDB and AWS Lambda (Python), connected to the world via the modern 
+									Amazon API Gateway HTTP API. This wasn't a "one and done" setup. I was testing and breaking things the whole time. I ended up 
+									moving away from the common "copy-paste" code I found in tutorials, rewriting my integration to be more secure and robust. 
+									Dealing with CORS (Cross Origin Resource Sharing) was a brutal lesson in web security, but it forced me to understand exactly 
+									how browsers and APIs communicate under the hood.  
+									</br><strong>Detailed Guides: DynamoDB | Lambda | API Gateway</strong>
+								</li>
+								<li><strong>Phase 5: The Grand Finale (Terraform)(Current Focus)</strong><br>
+									After building everything manually to understand the "why," I am now re-building the entire stack using Terraform. This allows 
+									me to treat my entire infrastructure as a few lines of code. It's a massive shift in mindset, and it's the primary focus of my 
+									current study as I prepare for the Terraform Associate certification.  
+									</br><strong>Detailed Guide: <a href="project_terraform.html">The Terraform Migration</a></strong>
+								</li>
+							</ul>
 
-							<li><strong>Infrastructure as Code (IaC)</strong>: Moving away from manual configuration to define every resource in code, ensuring my environment is reproducible 
-								and professional.</li>
+							<h3>High-Level Architecture</h3>
+							My architecture follows a standard “Serverless Three-Tier” pattern:
+							<p><strong>The Edge Layer:</strong> When you visit JonathanLayman.com, Route 53 directs you to a CloudFront edge location. This ensures 
+								the site loads instantly, whether you're in New York or Tokyo.</p>
+							<p><strong>The Logic Layer:</strong> As the page loads, JavaScript sends a request to the API Gateway (HTTP API). This triggers an 
+								AWS Lambda function—a piece of “serverless” Python code that wakes up just long enough to process the visit.</p>
+							<p><strong>The Data Layer:</strong> The Lambda function talks to DynamoDB, retrieving and incrementing the visitor count before sending 
+								the number back to your screen.</p>
 
-							<li><strong>CI/CD Automation</strong>: Implementing a "hands-off" deployment pipeline where every code change is automatically tested and pushed to production 
-								via GitHub Actions.</li>
+							<h3>Why This Project Matters</h3>
+							I wanted to move beyond abstract certifications. This project was my chance to prove that I can handle the actual friction of modern 
+								technology:
 
-							<li><strong>Security-First Mindset</strong>: Implementing HTTPS, DNSSEC, and the principle of least privilege to ensure my cloud presence is battle-hardened.</li>
-					</ul>
-							<h3><strong>Why I'm Taking This On?</strong></h3>
-
-							<p>In the cloud, certifications are just the baseline; real-world ability is proven by the ability to "Google well" and glue services together into a functioning 
-							system. This project serves as my "baptism by fire," allowing me to bang my head against DNS, CORS, and deployment scripts until the knowledge is burned into my brain.</p>
-						</br>
-						<h3><strong>Upcoming Projects</strong></h3>
-						<h3>Phase 2: Launching My Site with AWS</h3>
-						<p>The next phase of my website focuses on production-ready deployment and security. I'm implementing HTTPS across the entire site by placing my static S3 website behind Amazon 
-							CloudFront, ensuring encrypted traffic and modern web security standards.  Once CloudFront is in place, I'll configure a custom domain and DNS routing using Amazon Route 53, 
-							pointing my personal domain directly to the CloudFront distribution. This step completes the transition from a basic static site to a secure, globally distributed web 
-							presence—mirroring real-world cloud deployment practices.  This milestone marks the official “go-live” moment for my site.</p>
-						<h3>Phase 3: Securing the Site with AWS CloudFront</h3>
-						<p>This phase focuses on hardening the website by placing it behind Amazon CloudFront. I configured a global CDN in front of the S3 static site to enforce HTTPS, improve 
-							performance, and add an additional security layer. This involved setting up SSL certificates, configuring origin access controls, updating DNS records, and handling 
-							redirects to ensure all traffic is encrypted and routed correctly. The result is a faster, more secure, and production-ready website that follows real-world cloud 
-							security best practices.</p>
-					</section>
+							<p><strong>Troubleshooting:</strong> I spent hours staring at “Access Denied” screens until I truly understood IAM policies.</p>
+							<p><strong>Security:</strong> I followed the “Principle of Least Privilege,” ensuring my code only has the exact permissions it needs to run.</p>
+							<p><strong>Modern Thinking:</strong> I opted for the HTTP API, proving I can evaluate technical trade-offs based on cost and performance rather than 
+									just following old tutorials.</p>
+							<p><strong>Resilience:</strong> By using Terraform and CI/CD, I've ensured that my resume isn't just a static page—it's a living, automated piece of 
+									infrastructure.</p>
+							<p><strong>Where I am now:</strong> I am currently in the thick of Phase'5, re-engineering this project to be “Infrastructure as Code” native. Follow 
+								along as I turn manual clicks into reproducible code.</p>
+						</section>
 				</article>
 			<!-- Post -->
 			</div>
