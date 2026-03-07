@@ -48,54 +48,102 @@
 				<article class="post">
 					<header>
 						<div class="title">
-							<h2>My Journey to the Cloud</h2>
-							<p>From Teaching to Completing the AWS Cloud Resume Challenge</p>
-							<time class="published">January 28, 2026</time>
+							<h2>Building a Serverless Visitor Counter with Lambda and DynamoDB</h2>
+							<p>Part 7 of the AWS Cloud Resume Challenge.</p>
+							<time class="published">February 23, 2026</time>
 						</div>
 					</header>
 					<section class="project">
-						<!--<img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" />-->
-						<p>This website exists first and foremost as a hands-on project.
-						I wanted a single place where I could take what I've learned through certifications, teaching, and prior experience and turn it into something concrete. The goal was never just to 
-						earn credentials—it was to build, deploy, secure, and maintain real systems in a way that reflects how cloud environments actually work. This site serves as both a technical portfolio 
-						and a living record of that process.</p>
-						<p>It's what led me to the <a href="https://cloudresumechallenge.dev/docs/the-challenge/aws/" target="_blank" rel="noopener noreferrer">Cloud Resume Challenge</a>.</p>
-						<p>At its core, the challenge is about building a resume website using modern cloud tools and best practices. More importantly, it forces you to work through real-world concepts like infrastructure 
-						design, security, automation, and deployment. It isn't about following a tutorial step by step; it's about understanding why each component exists and how the pieces fit together. This site is the 
-						result of that work.</p>
+						<!--<a href="Project.html" class="image featured"><img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" /></a>-->
+						<strong>GitHub Repository:</strong><a href="https://github.com/jlayman09/Layman_CloudResumeWebsite" target="_blank" rel="noopener noreferrer">Jonathan Layman Resume Site</a>
+						</br></br>
+						<p>With my frontend fully secured and my cost monitoring in place, it was time to add the first dynamic feature to the website: a visitor counter.</br>
+						This is one of the core components of the AWS Cloud Resume Challenge because it demonstrates how data moves through a modern cloud architecture. A request starts in the user's browser, calls an API endpoint, triggers backend logic, updates a database, and returns a result back to the frontend.</p>
+						To build this feature, I implemented a serverless architecture using:
+						<ul>
+							<li><strong>Amazon DynamoDB</strong> to store the visitor count</li>
+							<li><strong>AWS Lambda</strong> to process the request and update the database</li>
+						</ul>
+						This approach eliminates the need to manage servers while still allowing the application to scale automatically.
 
-						<h3>Background</h3>
-						<p>My professional background includes military service in intelligence and analysis roles, followed by several years teaching cybersecurity and networking. Both experiences emphasized structured 
-						problem-solving, attention to detail, and the importance of understanding complex systems rather than memorizing surface-level information.
-						
-						<p>Over time, I reached a point where I felt a clear career ceiling in education. While teaching cybersecurity was rewarding, I wanted to move closer to designing and operating the systems themselves. 
-						Cloud engineering—especially within AWS—felt like a natural progression, combining infrastructure, security, automation, and architecture in a way that aligned with both my interests and prior experience.</p>
+						<h3>Step 1: Setting Up the Database (DynamoDB)</h3>
+						<p>The first step was creating a place to store the visitor count. For this, I used Amazon DynamoDB, AWS's fully managed NoSQL database. DynamoDB is designed for high availability and low latency, making it ideal for lightweight application data like a simple visitor counter.</p>
+						I created a table called: <code>cloud-resume-stats</code></br>
+						The table was configured with the following key:
+						<ul>
+							<li><strong>Partition Key:</strong> <code>id</code> (String)</li>
+						</ul>
+						This key uniquely identifies each item in the table. To initialize the counter, I manually created the first item with the following attributes:
+						<ul>
+							<li><code>id</code>: visitors</li>
+							<li><code>count</code>: 0</li>
+						</ul>
+						This provides the starting value that the Lambda function will increment each time the API is called.
+						<img src="images/P7_Step1_DynamoDB.png" width="640" height="341" alt="Screenshot of the DynamoDB table Items view showing the visitors record with count = 0" />
 
-						<h3>From Certifications to Application</h3>
-						<p>My shift toward cloud engineering was intentional and gradual. I focused first on networking and security fundamentals, then layered in AWS-focused certifications to build cloud-specific knowledge. 
-						Certifications provided structure and accountability, but they also highlighted a limitation: they don't fully demonstrate how someone builds, troubleshoots, or improves real systems.</p>
-						
-						<p>That realization is what pushed me toward hands-on projects. I wanted something I could own end-to-end, where decisions, mistakes, and improvements were part of the learning process rather than abstract 
-						concepts.</p>
+						<h3>Step 2: Writing the Backend Logic (AWS Lambda)</h3>
+						<p>Next, I created an AWS Lambda function to handle the visitor counting logic. Lambda functions allow you to run code in response to events without provisioning or managing servers. The function executes only when it is triggered, which makes it cost-effective for small workloads like this.</p>
+						I wrote the function in Python using the boto3 library, which is the AWS SDK for Python. The Lambda function performs three main tasks:
+						<ol>
+							<li>Connect to the DynamoDB service</li>
+							<li>Increment the visitor count stored in the table</li>
+							<li>Return the updated value to the caller</li>
+						</ol>
+						The most important part of the function is the atomic update operation. Instead of reading the value and writing it back manually, the function uses DynamoDB's <code>update_item</code> operation with an update expression. This allows the database to handle the increment operation safely.
+						<p><strong>Why this matters:</strong> If multiple visitors load the website at the same time, DynamoDB ensures the counter increments correctly without race conditions or lost updates.</p>
+						<img src="images/P7_Step2_LambdaCode.png" width="640" height="341" alt="Screenshot of the Lambda function editor showing the Python code" />
 
-						<h3>Why the Cloud Resume Challenge</h3>
-						<p>I chose the AWS Cloud Resume Challenge because it sits at the intersection of theory and practice. It requires you to design infrastructure, secure resources using least-privilege principles, automate 
-						deployments, and treat documentation and iteration as part of the work.</p>
-						
-						<p>This project touches on a broad range of core cloud concepts, including infrastructure with Amazon S3, CloudFront, and Route 53; security through IAM and HTTPS; CI/CD and automation using GitHub workflows; 
-						infrastructure as code with Terraform; and backend services built with Lambda, API Gateway, and DynamoDB. Each piece exists here for a reason, chosen to reflect how real cloud systems are built and maintained.</p>
-						
-						<p>While the challenge provided the starting structure, this site is designed to go beyond it. New projects will be added, existing ones will evolve, and approaches will change as my skills grow. That ongoing 
-						refinement is intentional.</p>
+						<h3>Step 3: Securing the Connection with IAM</h3>
+						<p>By default, a Lambda function cannot access other AWS services. Permissions must be explicitly granted through IAM roles. Each Lambda function runs with an execution role, which defines what services the function is allowed to interact with.</p>
+						To follow the Principle of Least Privilege, I created a custom policy that allows only the minimum required permissions. The policy grants the following actions:
+						<ul>
+							<li><code>dynamodb:GetItem</code></li>
+							<li><code>dynamodb:UpdateItem</code></li>
+						</ul>
+						These permissions are scoped specifically to the ARN of the <code>cloud-resume-stats</code> DynamoDB table. After attaching the policy to the Lambda execution role, I tested the function using the Lambda test feature to confirm it could successfully update the database.
+						<img src="images/P7_Step3_IAMPolicy.png" width="640" height="341" alt="Screenshot of the IAM policy JSON showing DynamoDB permissions" />
 
-						<h3>Where This Is Going</h3>
-						<p>Right now, this site is centered on the Cloud Resume Challenge. Over time, it will grow into a broader portfolio of cloud and security-focused projects. If you're here as a recruiter or hiring manager, 
-						this site is meant to show how I approach learning and building systems, not just what I've studied. If you'	re here out of curiosity, I hope it provides a clear picture of what the challenge is and why 
-						hands-on work matters.</p>
+						<h3>Step 4: Creating an Endpoint for the Frontend</h3>
+						<p>In order for the website to trigger the Lambda function, it needs an HTTP endpoint that the browser can call. For this stage of the project, I enabled a Lambda Function URL, which provides a simple HTTPS endpoint for invoking the function.</p>
+						<p>This allowed the frontend JavaScript to send requests directly to the Lambda function. Because the website is hosted on a different domain than the Lambda endpoint, I also needed to configure CORS (Cross-Origin Resource Sharing). CORS allows browsers to safely make requests between different domains.</p>
+						To secure the endpoint, I configured the following settings:
+						<ul>
+							<li><strong>Allowed Method:</strong> GET</li>
+							<li><strong>Allowed Origin:</strong> <code>https://jonathanlayman.com</code></li>
+						</ul>
+						By restricting the allowed origin to my domain, I ensured that only my website can call the Lambda function.
+						<img src="images/P7_Step4_LambdaURL.png" width="640" height="341" alt="Screenshot of the Lambda Function URL configuration page with CORS settings" />
 
-						<p>If you'd like to explore the technical side of what I've built, you can view the projects section of the site. If you'd like to reach out, there's a contact section where you can send me a 
-						message directly.</p>
+						<h3>Step 5: Integrating the Counter with the Frontend</h3>
+						<p>With the backend in place, the final step was connecting it to the website. I added a small JavaScript script to the frontend that runs when the page loads. The script performs three actions:</p>
+						<ol>
+							<li>Sends a request to the Lambda Function URL</li>
+							<li>Waits for the JSON response containing the updated visitor count</li>
+							<li>Updates the visitor counter displayed on the page</li>
+						</ol>
+						When a user visits the site:
+						<ul>
+							<li>The browser sends a request to the Lambda endpoint</li>
+							<li>Lambda increments the value stored in DynamoDB</li>
+							<li>The updated visitor count is returned to the browser</li>
+							<li>The page displays the updated number</li>
+						</ul>
+						This completes the full data flow from frontend to backend and back again.
 
+						<h3>Lessons Learned</h3>
+						<p>This part of the project highlighted an important reality of backend development in the cloud: writing the code is often the easiest part. A significant portion of the work involves configuring permissions, security controls, and service integrations correctly.</p>
+						<p>Ensuring the IAM role permissions were tightly scoped and configuring CORS properly were essential steps to make the system both functional and secure.</p>
+
+						<h3>The Result</h3>
+						At this point, the website now includes a fully functional serverless visitor counter. The architecture looks like this:
+						<p style="text-align: center;"><strong>User Browser &rarr; Lambda Function URL &rarr; AWS Lambda &rarr; DynamoDB Table &rarr; Updated visitor count returned to the browser</strong></p>
+						Every time someone loads the page, the counter increments automatically.
+
+						<h3>What's Next?</h3>
+						<p>Up to this point, most of the infrastructure for this project was created manually through the AWS console. This approach is commonly referred to as ClickOps. While this works for learning and experimentation, production environments rely on Infrastructure as Code (IaC) to ensure that infrastructure is reproducible, version-controlled, and easy to manage.</p>
+						<p>In the final stage of this project, I will begin converting my AWS infrastructure into code using Terraform, one of the most widely used Infrastructure as Code tools in the industry. This will allow me to manage the entire environment—S3, CloudFront, Lambda, and DynamoDB—through configuration files instead of manual setup.</p>
+						</br>
+						<strong>Next Up:</strong> <a href="project_terraform.html">Infrastructure as Code - Rebuilding the Project with Terraform</a>
 					</section>
 				</article>
 			<!-- Post -->

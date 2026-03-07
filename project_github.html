@@ -31,6 +31,8 @@
 											<li><a href="project_cloudfront.html">CLoudFront HTTPS</a></li>
 											<li><a href="project_github.html">GitHub CI/CD</a></li>
 											<li><a href="project_costoptimization.html">Cost Optimization</a></li>
+											<li><a href="project_visitorcounter.html">Creating a Visitor Counter</a></li>
+											<li><a href="project_terraform.html">IaC with Terraform</a></li>
 										</ul>
 									</li>
 									<li><a class="icon solid fa-user-tie" href="resume.html"><span>Resume</span></a></li>
@@ -46,14 +48,85 @@
 				<article class="post">
 					<header>
 						<div class="title">
-							<h2>Automating Deployments using GitHub and CodePipeline</h2>
+							<h2>Automating Deployments with GitHub CI/CD</h2>
 							<p>Part 5 of the AWS Cloud Resume Challenge</p>
 							<time class="published">January 28, 2026</time>
 						</div>
 					</header>
 					<section class="project">
-						<a href="Project.html" class="image featured"><img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" /></a>
-						<p>Future Writeup Coming Soon.</p>
+						<p>Now that my website was live, secured with HTTPS, and delivered globally through CloudFront, the next step was improving the deployment process. Up to this point, every time I made a small change—whether updating my resume text or adjusting a line of CSS—I had to manually upload files to my S3 bucket through the AWS Console. While this works for small experiments, it quickly becomes inefficient and error-prone.</p>
+						<p>To solve this, I implemented a CI/CD pipeline using GitHub Actions. Now, whenever I push changes to my repository, GitHub automatically deploys the updated website to AWS. This approach reflects how modern development teams manage infrastructure and applications: through automation and version control rather than manual updates.</p>
+
+						<h3>Step 1: Creating the GitHub Repository</h3>
+						<p>The first step was moving my website into version control. I created a repository on GitHub and pushed my website files, including:</p>
+						<ul>
+							<li>HTML</li>
+							<li>CSS</li>
+							<li>JavaScript</li>
+							<li>Images and other static assets</li>
+						</ul>
+						This repository now acts as the single source of truth for the project. Instead of keeping multiple versions of files locally, every change is tracked through Git commits. Version control also allows me to easily roll back changes, track the history of updates, and collaborate more effectively if the project grows in the future.
+						<img src="images/P5_Step1_GitHubRepo.png" width="640" height="341" alt="Screenshot of the GitHub repository showing the website file structure" />
+
+						<h3>Step 2: Granting GitHub Permission to Deploy</h3>
+						<p>For GitHub to deploy updates to AWS, it needs permission to interact with AWS services. To accomplish this, I created a dedicated IAM user in AWS with programmatic access. I then attached a policy allowing the minimal permissions required for deployment. The workflow requires access to:</p>
+						<ul>
+							<li><code>s3:PutObject</code></li>
+							<li><code>s3:DeleteObject</code></li>
+							<li><code>cloudfront:CreateInvalidation</code></li>
+						</ul>
+						These permissions allow GitHub to upload updated files to the S3 bucket and invalidate the CloudFront cache when changes occur. After creating the user, I stored the credentials securely inside my GitHub repository using GitHub Secrets. The secrets I added were:
+						<ul>
+							<li><code>AWS_ACCESS_KEY_ID</code></li>
+							<li><code>AWS_SECRET_ACCESS_KEY</code></li>
+						</ul>
+						These secrets allow GitHub Actions to authenticate with AWS without exposing credentials in the repository code.
+						<h4>Security Note</h4>
+						<p>Using access keys works well for small projects, but the modern best practice is to use OpenID Connect (OIDC) instead. OIDC allows GitHub to assume an AWS role and receive temporary credentials without storing long-lived access keys. While access keys were sufficient for this stage of the project, OIDC is the recommended approach for production environments.</p>
+						<img src="images/P5_Step2_GitHubSecrets.png" width="640" height="341" alt="Screenshot of the GitHub Secrets page showing AWS credentials stored securely" />
+
+						<h3>Step 3: Creating the Deployment Workflow</h3>
+						<p>GitHub Actions workflows are defined using YAML configuration files. Inside my repository, I created the following folder structure: <code>.github/workflows/</code>. Inside that folder, I added a file called: <code>deploy.yml</code>. This file defines the steps GitHub should run whenever new code is pushed to the repository.</p>
+						<p>The workflow is triggered automatically when code is pushed to the main branch. The pipeline performs the following steps.</p>
+						<ol>
+							<li><strong>Checkout the Repository Code</strong><br>GitHub pulls the latest version of the repository so the workflow can access the website files.</li>
+							<li><strong>Configure AWS Credentials</strong><br>The workflow authenticates with AWS using the credentials stored in GitHub Secrets.</li>
+							<li><strong>Deploy the Website Files to S3</strong><br>The deployment uses the AWS CLI command:
+								<pre><code>aws s3 sync . s3://jonathanlayman.com --delete</code></pre>
+								This command uploads the contents of the repository to the S3 bucket. The <code>--delete</code> flag ensures the bucket stays synchronized with the repository by removing files from S3 that no longer exist in the source code.
+							</li>
+							<li><strong>Invalidate the CloudFront Cache</strong><br>Because CloudFront caches website files, the pipeline also runs a cache invalidation command:
+								<pre><code>aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"</code></pre>
+								Without this step, visitors might continue seeing older cached versions of the site.
+							</li>
+						</ol>
+						<img src="images/P5_Step3_DeployYAML.png" width="640" height="341" alt="Screenshot of the deploy.yml workflow file in VS Code" />
+
+						<h3>Step 4: Testing the Pipeline</h3>
+						<p>After committing the workflow file, the CI/CD pipeline was automatically activated. To test the deployment process, I made a small change to my <code>index.html</code> file and pushed the update to GitHub. Inside the Actions tab of the repository, I could see the workflow executing in real time.</p>
+						<p>Once the pipeline completed successfully, a green checkmark confirmed that the deployment had finished. Within seconds of refreshing jonathanlayman.com, the changes were live on the website. This confirmed that the pipeline was successfully updating the S3 bucket and invalidating the CloudFront cache automatically.</p>
+
+						<h3>Tips and Lessons Learned</h3>
+						<h4>Use Branch Protection</h4>
+						To reduce the risk of pushing broken code, I enabled branch protection rules on the main branch. This helps enforce good development practices as the project grows.
+						<h4>Cache Invalidation Matters</h4>
+						CloudFront aggressively caches content to improve performance. Without running a cache invalidation during deployments, visitors may continue seeing outdated files. Including this step in the CI/CD pipeline ensures users always receive the latest version of the site.
+
+						<h3>The Result</h3>
+						At this stage of the project, the website deployment process is now fully automated. Whenever I push changes to GitHub:
+						<ul>
+							<li>GitHub Actions runs the deployment workflow</li>
+							<li>The updated files are synchronized to the S3 bucket</li>
+							<li>CloudFront invalidates its cache</li>
+							<li>The updated site becomes available globally within seconds</li>
+						</ul>
+						This automation eliminates manual uploads and makes future updates significantly faster and more reliable.
+
+						<h3>What's Next?</h3>
+						<p>With the frontend deployment process fully automated, the next step is reviewing cost management. Even though most of the resources used in this project fall within the AWS Free Tier, it's still important to monitor usage and set spending alerts early.</p>
+						<p>In the next post, I'll configure AWS Budgets and cost monitoring to ensure the infrastructure stays within safe spending limits as the project continues to grow.</p>
+						</br>
+						<strong>Next Up:</strong> <a href="project_costoptimization.html">Cost Optimization - Setting Up My AWS Safety Net</a>
 					</section>
 				</article>
 			<!-- Post -->
@@ -184,6 +257,24 @@
 												<time class="published" datetime="2015-10-06">February 14, 2026</time>
 											</header>
 											<a href="project_costoptimization.html" class="image"><img src="images/AWS_CostOpt.png" alt="Coin and Down Arrow" /></a>
+										</article>
+									</li>
+									<li>
+										<article>
+											<header>
+												<h3><a href="project_visitorcounter.html">Creating a Visitor Counter</a></h3>
+												<time class="published" datetime="2015-10-06">February 23, 2026</time>
+											</header>
+											<a href="project_visitorcounter.html" class="image"><img src="images/VisitorCounter.png" alt="Visitor Counter Logo" /></a>
+										</article>
+									</li>
+									<li>
+										<article>
+											<header>
+												<h3><a href="project_terraform.html">IaC with Terraform</a></h3>
+												<time class="published" datetime="2015-10-06">March 7, 2026</time>
+											</header>
+											<a href="project_terraform.html" class="image"><img src="images/TerraformLogo.png" alt="Terraform Logo" /></a>
 										</article>
 									</li>
 								</ul>

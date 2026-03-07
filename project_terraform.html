@@ -48,54 +48,124 @@
 				<article class="post">
 					<header>
 						<div class="title">
-							<h2>My Journey to the Cloud</h2>
-							<p>From Teaching to Completing the AWS Cloud Resume Challenge</p>
-							<time class="published">January 28, 2026</time>
+							<h2>Rebuilding the Infrastructure with Terraform</h2>
+							<p>Part 8 of the AWS Cloud Resume Challenge.</p>
+							<time class="published">March 7, 2026</time>
 						</div>
 					</header>
 					<section class="project">
-						<!--<img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" />-->
-						<p>This website exists first and foremost as a hands-on project.
-						I wanted a single place where I could take what I've learned through certifications, teaching, and prior experience and turn it into something concrete. The goal was never just to 
-						earn credentials—it was to build, deploy, secure, and maintain real systems in a way that reflects how cloud environments actually work. This site serves as both a technical portfolio 
-						and a living record of that process.</p>
-						<p>It's what led me to the <a href="https://cloudresumechallenge.dev/docs/the-challenge/aws/" target="_blank" rel="noopener noreferrer">Cloud Resume Challenge</a>.</p>
-						<p>At its core, the challenge is about building a resume website using modern cloud tools and best practices. More importantly, it forces you to work through real-world concepts like infrastructure 
-						design, security, automation, and deployment. It isn't about following a tutorial step by step; it's about understanding why each component exists and how the pieces fit together. This site is the 
-						result of that work.</p>
+						<!--<a href="Project.html" class="image featured"><img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" /></a>-->
+						<p>After completing the frontend and backend portions of the project using the AWS console, I reached an important realization: while manual configuration works for learning, it is not how infrastructure is managed in professional environments.</p>
+						<p>Modern cloud infrastructure is built using Infrastructure as Code (IaC). Instead of clicking through the AWS console, engineers define infrastructure in code so it can be version controlled, replicated, and deployed automatically.</p>
+						<p>To bring this project closer to real-world DevOps practices—and to prepare for the Terraform Associate certification—I migrated my existing AWS resources into HashiCorp Terraform and began managing the entire environment as code.</p>
+						This process involved two major phases:
+						<ul>
+							<li>Importing my existing AWS resources into Terraform</li>
+							<li>Using Terraform to build new infrastructure for my contact form email service</li>
+						</ul>
 
-						<h3>Background</h3>
-						<p>My professional background includes military service in intelligence and analysis roles, followed by several years teaching cybersecurity and networking. Both experiences emphasized structured 
-						problem-solving, attention to detail, and the importance of understanding complex systems rather than memorizing surface-level information.
-						
-						<p>Over time, I reached a point where I felt a clear career ceiling in education. While teaching cybersecurity was rewarding, I wanted to move closer to designing and operating the systems themselves. 
-						Cloud engineering—especially within AWS—felt like a natural progression, combining infrastructure, security, automation, and architecture in a way that aligned with both my interests and prior experience.</p>
+						<h3>Prerequisites</h3>
+						Before starting the migration, I prepared my development environment. Tools used:
+						<ul>
+							<li>Visual Studio Code</li>
+							<li>Terraform CLI</li>
+							<li>AWS CLI</li>
+						</ul>
+						<p>The AWS CLI was configured with credentials from an IAM user that has permission to manage the resources used in the project. This setup allows Terraform to authenticate with AWS and manage infrastructure programmatically.</p>
 
-						<h3>From Certifications to Application</h3>
-						<p>My shift toward cloud engineering was intentional and gradual. I focused first on networking and security fundamentals, then layered in AWS-focused certifications to build cloud-specific knowledge. 
-						Certifications provided structure and accountability, but they also highlighted a limitation: they don't fully demonstrate how someone builds, troubleshoots, or improves real systems.</p>
-						
-						<p>That realization is what pushed me toward hands-on projects. I wanted something I could own end-to-end, where decisions, mistakes, and improvements were part of the learning process rather than abstract 
-						concepts.</p>
+						<h3>Phase 1 - Importing Existing Infrastructure</h3>
+						<p>My website was already live and functioning. Instead of deleting those resources and rebuilding them, I used Terraform Import. Terraform Import allows existing AWS resources to be brought under Terraform management without recreating them.</p>
 
-						<h3>Why the Cloud Resume Challenge</h3>
-						<p>I chose the AWS Cloud Resume Challenge because it sits at the intersection of theory and practice. It requires you to design infrastructure, secure resources using least-privilege principles, automate 
-						deployments, and treat documentation and iteration as part of the work.</p>
-						
-						<p>This project touches on a broad range of core cloud concepts, including infrastructure with Amazon S3, CloudFront, and Route 53; security through IAM and HTTPS; CI/CD and automation using GitHub workflows; 
-						infrastructure as code with Terraform; and backend services built with Lambda, API Gateway, and DynamoDB. Each piece exists here for a reason, chosen to reflect how real cloud systems are built and maintained.</p>
-						
-						<p>While the challenge provided the starting structure, this site is designed to go beyond it. New projects will be added, existing ones will evolve, and approaches will change as my skills grow. That ongoing 
-						refinement is intentional.</p>
+						<h4>Step 1.1 - Initializing the Terraform Project</h4>
+						<p>I created a new project directory and added a file called <code>main.tf</code>. Inside this file, I defined the AWS provider so Terraform knows which platform it should interact with.</p>
+						Example configuration:
+						<pre><code>terraform {
+ required_providers {
+   aws = {
+     source  = "hashicorp/aws"
+     version = "~> 5.0"
+   }
+ }
+}
 
-						<h3>Where This Is Going</h3>
-						<p>Right now, this site is centered on the Cloud Resume Challenge. Over time, it will grow into a broader portfolio of cloud and security-focused projects. If you're here as a recruiter or hiring manager, 
-						this site is meant to show how I approach learning and building systems, not just what I've studied. If you'	re here out of curiosity, I hope it provides a clear picture of what the challenge is and why 
-						hands-on work matters.</p>
+provider "aws" {
+ region = "us-east-1"
+}</code></pre>
+						This configuration tells Terraform to use the AWS provider and operate within the us-east-1 region, where several of my resources were created.
 
-						<p>If you'd like to explore the technical side of what I've built, you can view the projects section of the site. If you'd like to reach out, there's a contact section where you can send me a 
-						message directly.</p>
+						<h4>Step 1.2 - Creating Resource Skeletons</h4>
+						<p>Next, I created placeholder resource blocks for the infrastructure that already existed. These blocks initially contained very little configuration because Terraform would later import the actual resource settings.</p>
+						<p>Example resource definitions:</p>
+						<pre><code>resource "aws_s3_bucket" "website_bucket" {
+}
 
+resource "aws_dynamodb_table" "stats_table" {
+}</code></pre>
+						<p>These skeleton resources act as placeholders so Terraform can map them to the real AWS resources.</p>
+
+						<h4>Step 1.3 - Importing the AWS Resources</h4>
+						<p>With the resource blocks defined, I used the Terraform CLI to import the existing infrastructure. Each resource was imported using its unique identifier.</p>
+						Example commands:
+						<pre><code>terraform import aws_s3_bucket.website_bucket jonathanlayman.com
+						terraform import aws_dynamodb_table.stats_table cloud-resume-stats</code></pre>
+						<p>These commands connect the Terraform configuration to the existing AWS resources.</p>
+
+						<h4>Step 1.4 - Reconciling Terraform State</h4>
+						<p>After importing the resources, Terraform still did not fully understand their configuration. To fix this, I ran <code>terraform plan</code> repeatedly. Terraform compares the configuration files to the real infrastructure and displays any differences.</p>
+						<p>My job was to update the <code>.tf</code> files until Terraform reported: "No changes. Your infrastructure matches the configuration." This step ensured Terraform's configuration accurately reflected the real AWS environment.</p>
+						<img src="images/P8_Step1_4_TerraformPlan.png" width="640" height="341" alt="Screenshot of Terraform plan showing 0 to add, 0 to change, 0 to destroy" />
+
+						<h3>Phase 2 - Building New Infrastructure with Terraform</h3>
+						<p>Once the existing infrastructure was under Terraform management, I began creating new resources entirely through code. The next feature I wanted to build was a serverless email service for the contact form on my website. This service allows visitors to submit a message directly through the site.</p>
+
+						<h4>Step 2.1 - Configuring Amazon SES</h4>
+						<p>To send emails from the contact form, I used Amazon Simple Email Service (SES). Terraform was used to create the SES domain identity for my domain.</p>
+						<p>Example resource:</p>
+						<pre><code>resource "aws_ses_domain_identity" "website_email" {
+ domain = "jonathanlayman.com"
+}</code></pre>
+						<p>This allows AWS to verify that my domain is authorized to send email through SES.</p>
+
+						<h4>Step 2.2 - Creating IAM Permissions</h4>
+						<p>The Lambda function responsible for sending email needs permission to use SES. Using Terraform, I created an IAM role and policy that allows the Lambda function to call the SES send email API. Following security best practices, the policy grants only the specific permissions required for the function.</p>
+
+						<h4>Step 2.3 - Deploying the Email Lambda Function</h4>
+						<p>Next, I deployed the Lambda function responsible for processing messages submitted through the website contact form. Terraform packages the Lambda code and uploads it automatically. The function receives the form submission, processes the request, and sends an email using Amazon SES.</p>
+						<img src="images/P8_Step2_3_LambdaCode.png" width="640" height="341" alt="Screenshot of Terraform code defining the Lambda function" />
+
+						<h4>Step 2.4 - Creating the API Endpoint</h4>
+						<p>For the contact form to communicate with the Lambda function, the website needs a public endpoint. I created this using API Gateway, which acts as the entry point for HTTP requests. Using Terraform, I configured an API Gateway endpoint that accepts POST requests and forwards them to the Lambda function. This architecture allows the contact form to securely trigger the backend email service.</p>
+
+						<h3>Terraform Best Practices Learned</h3>
+						Working through this process reinforced several important Terraform practices.
+						<ul>
+							<li><strong>Remote State:</strong> Terraform state files contain sensitive information about infrastructure. I configured a remote backend using an S3 bucket to store the state file securely.</li>
+							<li><strong>Git Ignore Rules:</strong> To prevent sensitive information from being exposed, I added the following to my <code>.gitignore</code> file:
+								<ul>
+									<li><code>terraform.tfstate</code></li>
+									<li><code>terraform.tfvars</code></li>
+								</ul>
+							</li>
+							<li><strong>Outputs:</strong> Terraform output blocks allow useful information—such as API endpoints or CloudFront URLs—to be displayed automatically after deployment. These outputs help streamline testing and integration.</li>
+						</ul>
+
+						<h3>Final Architecture</h3>
+						At the end of this process, my project infrastructure is now fully managed using Terraform. The architecture includes:
+						<ul>
+							<li><strong>S3</strong> - Static website hosting</li>
+							<li><strong>CloudFront</strong> - Global CDN and HTTPS</li>
+							<li><strong>Route 53</strong> - DNS management</li>
+							<li><strong>Lambda</strong> - Serverless compute</li>
+							<li><strong>DynamoDB</strong> - Visitor counter database</li>
+							<li><strong>API Gateway</strong> - Backend API endpoints</li>
+							<li><strong>SES</strong> - Email delivery service</li>
+						</ul>
+						All of these resources can now be deployed or recreated using Terraform configuration files.
+
+						<h3>Conclusion</h3>
+						Learning Terraform fundamentally changed how I think about infrastructure. Instead of manually configuring services through the AWS console, the entire environment is now described in code. This makes the infrastructure easier to manage, easier to reproduce, and far more scalable.</br>
+						If this environment ever needed to be rebuilt, the entire architecture could be redeployed in minutes using Terraform.</br>
+						Completing this final stage marks the end of my AWS Cloud Resume Challenge. What started as a simple static website evolved into a fully automated, serverless cloud architecture managed entirely through Infrastructure as Code.
 					</section>
 				</article>
 			<!-- Post -->

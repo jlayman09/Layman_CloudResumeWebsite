@@ -31,6 +31,8 @@
 											<li><a href="project_cloudfront.html">CLoudFront HTTPS</a></li>
 											<li><a href="project_github.html">GitHub CI/CD</a></li>
 											<li><a href="project_costoptimization.html">Cost Optimization</a></li>
+											<li><a href="project_visitorcounter.html">Creating a Visitor Counter</a></li>
+											<li><a href="project_terraform.html">IaC with Terraform</a></li>
 										</ul>
 									</li>
 									<li><a class="icon solid fa-user-tie" href="resume.html"><span>Resume</span></a></li>
@@ -46,14 +48,66 @@
 				<article class="post">
 					<header>
 						<div class="title">
-							<h2>Securing our Website with AWS CloudFront</h2>
+							<h2>Securing the Website with CloudFront and HTTPS</h2>
 							<p>Part 4 of the AWS Cloud Resume Challenge</p>
 							<time class="published">January 28, 2026</time>
 						</div>
 					</header>
 					<section class="project">
-						<a href="Project.html" class="image featured"><img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" /></a>
-						<p>Future Writeup Coming.</p>
+						<!--<a href="Project.html" class="image featured"><img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" /></a>-->
+						<p>Now that my domain was pointing to my S3 bucket through Route 53, the website was technically live. However, it was still being served over HTTP, which causes modern browsers to mark the site as Not Secure.</p>
+						<p>To fix this, I added Amazon CloudFront and AWS Certificate Manager (ACM) to enable HTTPS and improve performance by distributing the site through AWS's global edge network.</p>
+						<p>Amazon CloudFront is AWS's Content Delivery Network (CDN). It caches website content at edge locations around the world, allowing users to retrieve files from the location geographically closest to them. This reduces latency and significantly improves load times.</p>
+
+						<h3>Step 1: Requesting an SSL Certificate</h3>
+						<p>Before configuring CloudFront, I needed an SSL/TLS certificate for my domain. I used AWS Certificate Manager (ACM) to request a public certificate for:</p>
+						<ul>
+							<li><code>jonathanlayman.com</code></li>
+							<li><code>www.jonathanlayman.com</code></li>
+						</ul>
+						<p>To validate ownership of the domain, I selected DNS validation. Because my domain is managed in Route 53, ACM automatically created the required validation records when I clicked Create records in Route 53. Once the DNS records propagated, the certificate status changed to Issued, meaning it was ready to attach to CloudFront.</p></br>
+						<strong>Important note:</strong> CloudFront only supports certificates created in the US East (N. Virginia) region (us-east-1). Even if other resources are located elsewhere, the certificate must exist in this region for CloudFront to use it.</br>
+						<img src="images/P4_Step1_ReqCert.png" width="640" height="341" alt="Request Certificate in AWS Certificate Manager" />
+
+						<h3>Step 2: Creating the CloudFront Distribution</h3>
+						With the certificate ready, I created a new CloudFront distribution. Key settings included:
+						<ul>
+							<li><strong>Origin Domain:</strong> My S3 bucket (using the standard S3 endpoint)</li>
+							<li><strong>Viewer Protocol Policy:</strong> Redirect HTTP to HTTPS</li>
+							<li><strong>Default Root Object:</strong> index.html</li>
+							<li><strong>Price Class:</strong> Use all edge locations</li>
+							<li><strong>Alternate Domain Names (CNAMEs):</strong> <code>jonathanlayman.com</code>, <code>www.jonathanlayman.com</code></li>
+							<li><strong>Custom SSL Certificate:</strong> The ACM certificate created in Step 1</li>
+						</ul>
+
+						<h3>Step 3: Updating Route 53 to Point to CloudFront</h3>
+						Initially, Route 53 was pointing directly to the S3 bucket. Now that CloudFront is sitting in front of the bucket, I had to update my DNS records to point to the CloudFront URL instead.
+						<ul>
+							<li><strong>Action:</strong> I went back to my Hosted Zone in Route 53 and edited the "A Record" I created in the previous post.</li>
+							<li><strong>New Target:</strong> I changed "Route traffic to" from the S3 bucket to Alias to CloudFront distribution and selected my new distribution from the list.</li>
+						</ul>
+						<img src="images/P4_Step3_RecordName.png" width="640" height="341" alt="Screenshot of the Route 53 Edit Record pane showing the transition from an S3 target to a CloudFront target" /></br>
+
+						<h3>Step 4: Restricting S3 Access (Optional but Recommended)</h3>
+						To prevent users from bypassing CloudFront and accessing the S3 bucket directly, I configured Origin Access Control (OAC). OAC allows CloudFront to securely request objects from the bucket while keeping the bucket itself private.
+						I updated the S3 bucket policy to allow access only from the CloudFront distribution, which ensures that all traffic flows through CloudFront where HTTPS and caching are enforced. This improves both security and performance.
+
+						<h3>The Result</h3>
+						After waiting for the CloudFront distribution to deploy (typically 5-10 minutes), the site became fully operational behind the CDN. The final result:
+						<ul>
+							<li>The site loads through HTTPS</li>
+							<li>Traffic is distributed globally through CloudFront edge locations</li>
+							<li>The S3 bucket is no longer publicly accessible</li>
+							<li>All traffic flows through CloudFront for caching and security</li>
+						</ul>
+						<p>At this point, the static website was fully hosted, secured, and optimized for global delivery.</p>
+						<img src="images/P4_Step4_BlockPublic.png" width="640" height="341" alt="Screenshot of the Block Public Access settings for the S3 bucket" /></br>
+
+						<h3>What's Next?</h3>
+						<p>Now that the frontend infrastructure is fully deployed and secured, the next step is automation. Manually uploading files to S3 works, but it does not scale well for real development workflows.</p>
+						<p>In the next post, I'll configure GitHub Actions to build a CI/CD pipeline that automatically deploys updates to the site whenever I push new code to my repository.</p>
+						</br>
+						<strong>Next Up:</strong> <a href="project_github.html">Automating with GitHub Actions and CI/CD</a>
 					</section>
 				</article>
 			<!-- Post -->
@@ -184,6 +238,24 @@
 												<time class="published" datetime="2015-10-06">February 14, 2026</time>
 											</header>
 											<a href="project_costoptimization.html" class="image"><img src="images/AWS_CostOpt.png" alt="Coin and Down Arrow" /></a>
+										</article>
+									</li>
+									<li>
+										<article>
+											<header>
+												<h3><a href="project_visitorcounter.html">Creating a Visitor Counter</a></h3>
+												<time class="published" datetime="2015-10-06">February 23, 2026</time>
+											</header>
+											<a href="project_visitorcounter.html" class="image"><img src="images/VisitorCounter.png" alt="Visitor Counter Logo" /></a>
+										</article>
+									</li>
+									<li>
+										<article>
+											<header>
+												<h3><a href="project_terraform.html">IaC with Terraform</a></h3>
+												<time class="published" datetime="2015-10-06">March 7, 2026</time>
+											</header>
+											<a href="project_terraform.html" class="image"><img src="images/TerraformLogo.png" alt="Terraform Logo" /></a>
 										</article>
 									</li>
 								</ul>
