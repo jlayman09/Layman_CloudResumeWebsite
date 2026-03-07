@@ -1,101 +1,180 @@
 # Cloud Resume Challenge – Jonathan Layman
 
-This repository contains the source code and infrastructure work for my implementation of the **Cloud Resume Challenge (AWS Edition)**.
+This repository contains the source code and development history for my implementation of the **AWS Cloud Resume Challenge**.
 
-The goal of this project is to demonstrate real-world cloud skills by building, securing, and deploying a serverless resume website using AWS services and modern DevOps practices.
+The goal of this project is to demonstrate real-world cloud engineering skills by designing, securing, and deploying a **serverless personal website on AWS**, while documenting each stage of the process.
 
 🔗 **Live Site:** https://jonathanlayman.com
 
 ---
 
-## Project Overview
+# Project Overview
 
-The Cloud Resume Challenge is a hands-on project designed to showcase practical cloud knowledge beyond certifications. This implementation includes:
+The **Cloud Resume Challenge** is a hands-on project designed to demonstrate practical cloud knowledge beyond certifications. This implementation focuses on building a production-style architecture using AWS services and modern DevOps practices.
 
-- A static resume website hosted on AWS
-- Secure HTTPS delivery using CloudFront
-- Infrastructure and deployment practices aligned with industry best practices
-- Ongoing enhancements as the project progresses
+This project includes:
 
----
-
-## Architecture (Current)
-
-- **Amazon S3** – Private bucket hosting static website files  
-- **Amazon CloudFront** – Global CDN with HTTPS and Origin Access Control (OAC)  
-- **AWS Certificate Manager (ACM)** – TLS certificate for custom domain  
-- **Amazon Route 53** – DNS management for apex and www domains  
-- **Git & GitHub** – Version control and project history  
+* A static website hosted on AWS
+* Global content delivery with HTTPS
+* A serverless backend API
+* Version-controlled infrastructure
+* CI/CD deployment automation
+* Ongoing improvements using Infrastructure as Code
 
 ---
 
-## Project Stages
+# Current Architecture
 
-### ✅ Stage 1 – Static Website & HTTPS (Completed)
-- Designed and built a personal resume website
-- Uploaded site assets to a private S3 bucket
-- Configured CloudFront with OAC for secure access
-- Enabled HTTPS with ACM
-- Connected custom domain via Route 53
+```
+User Browser
+      ↓
+CloudFront CDN
+      ↓
+S3 Static Website
+      ↓
+JavaScript API Call
+      ↓
+API Gateway
+      ↓
+AWS Lambda (Python)
+      ↓
+DynamoDB
+```
 
-### 🚧 Stage 2 – Visitor Counter (Planned)
-- JavaScript-based visitor counter
-- AWS Lambda (Python)
-- Amazon DynamoDB
-- Amazon API Gateway
+Core AWS Services Used:
 
-### 🚧 Stage 3 – CI/CD & Infrastructure as Code (Planned)
-- GitHub Actions for automated deployments
-- Infrastructure as Code (Terraform or AWS SAM)
-
-### 🚧 Stage 4 – Testing & Monitoring (Planned)
-- Automated tests
-- CloudWatch monitoring
-- Logging and metrics
-
----
-
-## Branching Strategy
-
-- **`master`** – Stable, production-ready code
-- **`Project/blog`** – Blog content and related development
-
-Feature work is done in branches and merged into `master` once complete.
+* **Amazon S3** – Secure static website hosting
+* **Amazon CloudFront** – Global CDN with HTTPS
+* **AWS Certificate Manager (ACM)** – TLS certificate management
+* **Amazon Route 53** – DNS management for custom domain
+* **AWS Lambda** – Serverless backend for visitor tracking
+* **Amazon DynamoDB** – Persistent visitor counter storage
+* **Amazon API Gateway** – HTTP API endpoint
+* **GitHub** – Source control and project documentation
 
 ---
 
-## Why This Project Matters
+# Project Build Phases
 
-This project demonstrates:
-- Real AWS experience, not just theoretical knowledge
-- Secure cloud architecture design
-- Understanding of DNS, CDN, IAM, and serverless services
-- Version control and professional Git workflows
+The project is documented through a series of build logs published on my website.
 
-It complements my background in **cybersecurity education** and my transition into **cloud-focused roles**.
+### Phase 1 – Development Environment
+
+* Configured development workflow using **Visual Studio Code**
+* Organized local project structure
+* Implemented Git version control
+
+### Phase 2 – Static Website Hosting
+
+* Built a personal resume website
+* Deployed site to **Amazon S3**
+* Configured secure bucket policies
+
+### Phase 3 – Domain and DNS Configuration
+
+* Registered and configured custom domain
+* Configured **Amazon Route 53**
+* Connected DNS records to CloudFront distribution
+
+### Phase 4 – Secure HTTPS Delivery
+
+* Implemented **Amazon CloudFront**
+* Enabled HTTPS using **AWS Certificate Manager**
+* Configured **Origin Access Control (OAC)** for secure S3 access
+
+### Phase 5 – CI/CD Automation
+
+* Integrated **GitHub repository**
+* Configured automated deployments
+* Website updates now deploy through a CI/CD workflow
+
+### Phase 6 – Cost Monitoring
+
+* Implemented **AWS Budgets**
+* Configured cost alerts to monitor free-tier usage
+* Introduced basic **FinOps practices**
+
+### Phase 7 – Serverless Visitor Counter
+
+* Implemented visitor tracking using:
+
+  * AWS Lambda (Python)
+  * Amazon DynamoDB
+  * Amazon API Gateway
+* Frontend JavaScript retrieves visitor counts via API
+
+### Phase 8 – Infrastructure as Code (In Progress)
+
+* Migrating infrastructure to **Terraform**
+* Goal: manage AWS resources using declarative infrastructure
 
 ---
 
-## Project Repositories
+# Branching Strategy
 
-Frontend (Website)  
+```
+master        → Production-ready website code
+Project/blog  → Blog posts and documentation
+feature/*     → Development branches for new features
+```
+
+This structure reflects a simplified workflow used in many real-world development environments.
+
+---
+
+# Project Repositories
+
+### Frontend (Website)
+
+Contains the static website code and deployment configuration.
+
 https://github.com/jlayman09/Layman_CloudResumeWebsite
 
-Serverless Backend  
+### Serverless Backend
+
+Contains the Lambda function, documentation, and infrastructure work for the visitor counter.
+
 https://github.com/jlayman09/cloud-resume-backend
 
-## About Me
+---
 
-**Jonathan Layman**  
-Cybersecurity Educator | AWS | Cloud Security  
-📍 San Antonio, TX  
+# Why This Project Matters
 
-- HashiCorp Terraform Associate (Currently Studying)
-- CompTIA Network+  
-- CompTIA Security+   
-- AWS Certified AI Practitioner  
-- AWS Certified Solutions Architect Associate
-- AWS Certified Security Specialist
+This project demonstrates practical experience with:
 
-🔗 LinkedIn: https://www.linkedin.com/in/jonathanlayman  
-🌐 Website: https://jonathanlayman.com
+* Cloud architecture design
+* Secure web delivery using AWS
+* Serverless application development
+* API integration
+* DevOps practices
+* Infrastructure as Code concepts
+
+It complements my background in **cybersecurity education** and supports my transition into **cloud and cloud security roles**.
+
+---
+
+# About Me
+
+**Jonathan Layman**
+
+Cybersecurity Educator | Cloud Security | AWS
+
+📍 San Antonio, TX
+
+Certifications:
+
+* AWS Certified Solutions Architect – Associate
+* AWS Certified AI Practitioner
+* AWS Certified Security – Specialty
+* CompTIA Security+
+* CompTIA Network+
+
+Currently Studying:
+
+* HashiCorp Terraform Associate
+
+🔗 LinkedIn
+https://www.linkedin.com/in/jonathanlayman
+
+🌐 Website
+https://jonathanlayman.com
