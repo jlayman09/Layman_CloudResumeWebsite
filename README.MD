@@ -76,12 +76,21 @@ It complements my background in **cybersecurity education** and my transition in
 
 ---
 
+## Project Repositories
+
+Frontend (Website)  
+https://github.com/jlayman09/Layman_CloudResumeWebsite
+
+Serverless Backend  
+https://github.com/jlayman09/cloud-resume-backend
+
 ## About Me
 
 **Jonathan Layman**  
 Cybersecurity Educator | AWS | Cloud Security  
 📍 San Antonio, TX  
 
+- HashiCorp Terraform Associate (Currently Studying)
 - CompTIA Network+  
 - CompTIA Security+   
 - AWS Certified AI Practitioner  
