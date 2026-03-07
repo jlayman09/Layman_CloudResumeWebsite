@@ -1,10 +1,13 @@
 # Cloud Resume Challenge – Jonathan Layman
 
-This repository contains the source code and documentation for my implementation of the **AWS Cloud Resume Challenge**.
+Implementation of the **AWS Cloud Resume Challenge**  
+https://cloudresumechallenge.dev/docs/the-challenge/aws/
+
+This repository contains the source code and documentation for my implementation of the challenge.
 
 The goal of this project is to demonstrate real-world cloud engineering skills by designing, securing, and deploying a **serverless personal website on AWS**, while documenting each phase of the build.
 
-Live Site:
+Live Site  
 https://jonathanlayman.com
 
 ## Project Overview
