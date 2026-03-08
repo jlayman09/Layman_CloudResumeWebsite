@@ -85,7 +85,7 @@
 						<p>Instead of using a traditional CNAME record, AWS provides an Alias record, which allows a root domain (such as <code>jonathanlayman.com</code>) to point directly to AWS resources like S3 or CloudFront. This is important because standard DNS rules normally prevent CNAME records from being used at the root domain.</p>
 						<p>At this point I also created a matching AAAA (IPv6) Alias record. While the S3 website endpoint itself does not natively support IPv6, this will become useful later when the domain is routed through CloudFront, which supports IPv6 natively.</p>
 
-						<img src="images/P3_Step3_DefSimpRecord.png" width="640" height="341" alt="Define a Simple Record - Route 53" />
+						<img src="images/P3_Step3_DefSimpRecord.png" style="width: 450px;" width="450" height="491" alt="Define a Simple Record - Route 53" />
 
 						<h3>Step 4: Verification and Propagation</h3>
 						Once the record is saved, you have to wait for the DNS changes to "propagate" across the internet. DNS propagation can technically take up to 48 hours, though in practice Route 53 updates usually become visible within a few minutes.
