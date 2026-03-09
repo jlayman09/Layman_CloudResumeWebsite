@@ -77,42 +77,51 @@
 							below will take you to my detailed, service-by-service breakdowns.
 						<ul>
 								<li><strong>Phase 1: Building the Foundation (Jan 28)</strong><br>
-									Before I could even think about the cloud, I had to get my own house in order. This phase wasn't about complex automation 
+									<p>Before I could even think about the cloud, I had to get my own house in order. This phase wasn't about complex automation 
 									yet; it was about getting comfortable with the tools of the trade. I spent this time learning how to navigate Visual Studio 
 									Code, moving away from basic text editors to a setup that actually felt professional. The real challenge here was a deep 
 									dive back into HTML and CSS. I had to relearn the building blocks of the web, experimenting with different designs and 
-									merging elements from various sites until I found a look that felt cohesive and, more importantly, felt like me.  
-								</br><strong>Detailed Guide: <a href="project_vscode.html">VS Code Workflow</a></strong>
+									merging elements from various sites until I found a look that felt cohesive and, more importantly, felt like me.</p>  
+									<strong>Phase 1 Detailed Guide: <a href="project_vscode.html">VS Code Workflow</a></strong>
 								</li>
 								<li><strong>Phase 2: Going Live Globally (Jan 30 - Feb 4)</strong><br>
-									The goal here was simple: put my resume online. The execution, however, was a lesson in global networking. I used Amazon S3 
+									<p>The goal here was simple: put my resume online. The execution, however, was a lesson in global networking. I used Amazon S3 
 									to host the static files, but a bare bucket isn't secure or fast enough for a professional site. I then moved into the 
 									networking side of AWS, using Route 53 to manage my custom domain and wrapping the whole site in Amazon CloudFront. This wasn't 
-									just about speed; it was a deep dive into how HTTPS and SSL certificates actually work to keep a site secure.  
-									</br><strong>Detailed Guides: <a href="project_awss3hosting.html">AWS S3 Hosting</a> | <a href="project_route53.html">Route 53 Domain</a> | 
+									just about speed; it was a deep dive into how HTTPS and SSL certificates actually work to keep a site secure.</p>  
+									<strong>Phase 2 Detailed Guides: <a href="project_awss3hosting.html">AWS S3 Hosting</a> | <a href="project_route53.html">Route 53 Domain</a> | 
 									<a href="project_cloudfront.html">CloudFront HTTPS</a></strong>
 								</li>
-								</li>
 								<li><strong>Phase 3: CI/CD & Cloud Hygiene (Feb 8 - Feb 14)</strong><br>
-									In the professional world, you don't manually upload files; you use a pipeline. I set up GitHub Actions so that every time I 
+									<p>In the professional world, you don't manually upload files; you use a pipeline. I set up GitHub Actions so that every time I 
 									save my code, it automatically runs my tests and deploys itself to AWS. I also took a hard look at the "Cloud Hygiene" of my 
-									project-setting up AWS Budgets and monitoring to ensure my cloud journey didn't result in a surprise bill.  
-									</br><strong>Detailed Guides: <a href="project_github.html">GitHub CI/CD</a> | <a href="project_costoptimization.html">Cost Optimization</a></strong>
+									project-setting up AWS Budgets and monitoring to ensure my cloud journey didn't result in a surprise bill.</p>  
+									<strong>Phase 3 Detailed Guides: <a href="project_github.html">GitHub CI/CD</a> | <a href="project_costoptimization.html">Cost Optimization</a></strong>
 								</li>
 								<li><strong>Phase 4: The Serverless Back-End & Integration (Feb 15 - Feb 23)</strong><br>
-									This is where the "magic" happens—and where the real frustration began. I needed a way to track visitors without running a 
+									<p>This is where the "magic" happens—and where the real frustration began. I needed a way to track visitors without running a 
 									traditional server. I built a serverless stack using DynamoDB and AWS Lambda (Python), connected to the world via the modern 
 									Amazon API Gateway HTTP API. This wasn't a "one and done" setup. I was testing and breaking things the whole time. I ended up 
 									moving away from the common "copy-paste" code I found in tutorials, rewriting my integration to be more secure and robust. 
 									Dealing with CORS (Cross Origin Resource Sharing) was a brutal lesson in web security, but it forced me to understand exactly 
-									how browsers and APIs communicate under the hood.  
-									</br><strong>Detailed Guides: <a href="project_visitorcounter.html">DynamoDB | Lambda | API Gateway</a></strong>
+									how browsers and APIs communicate under the hood.</p>  
+									<strong>Phase 4 Detailed Guides: <a href="project_visitorcounter.html">DynamoDB | Lambda | API Gateway</a></strong>
 								</li>
-								<li><strong>Phase 5: The Grand Finale (Terraform)(Current Focus)</strong><br>
-									After building everything manually to understand the "why," I am now re-building the entire stack using Terraform. This allows 
-									me to treat my entire infrastructure as a few lines of code. It's a massive shift in mindset, and it's the primary focus of my 
-									current study as I prepare for the Terraform Associate certification.  
-									</br><strong>Detailed Guide: <a href="project_terraform.html">The Terraform Migration</a></strong>
+								<li><strong>Phase 5 - Completing the Cloud Resume Challenge</strong>
+									<p>The final phase of the Cloud Resume Challenge focused on building the backend services that turn a static website into a dynamic cloud application. During this stage I implemented a serverless visitor counter using AWS Lambda and DynamoDB, allowing the website to record and display page visits in real time. The frontend communicates with the backend through an HTTP API endpoint, which triggers the Lambda function and updates the database.</p>
+
+									<p>After completing the serverless backend, I transitioned the infrastructure into Terraform to move away from manual AWS console configuration. Instead of rebuilding the environment from scratch, I imported the existing resources into Terraform and aligned the configuration until Terraform reported no infrastructure changes. This ensured the live AWS environment matched the Infrastructure as Code configuration while keeping the site fully operational.</p>
+
+									<p>At this point, the core requirements of the AWS Cloud Resume Challenge were complete. The project now included static website hosting, global content delivery, automated deployments, serverless backend functionality, and Infrastructure as Code management.</p>
+									<strong>Phase 5 Detailed Guide: <a href="project_terraform.html">The Terraform Migration</a></strong>
+								</li>
+								<li>
+									<strong>Phase 6 - Extending the Project Beyond the Challenge</strong>
+									<p>After completing the official challenge requirements, I began expanding the project with additional features to further develop my cloud engineering skills. Rather than simply stopping once the challenge was finished, this phase focuses on building new capabilities using the infrastructure already in place.</p>
+
+									<p>The first extension is a serverless email messaging feature integrated into the footer of the website. This will allow visitors to submit their name, email address, and a message directly through the site. When the form is submitted, the request will trigger a backend API endpoint, invoke an AWS Lambda function, and deliver the message to my email using AWS services.</p>
+
+									<p>Unlike earlier parts of the project that were initially created through the AWS console, this feature will be built entirely using Terraform from the start. This approach reinforces Infrastructure as Code practices and demonstrates how new services can be added to an existing cloud architecture in a repeatable and automated way.</p>
 								</li>
 							</ul>
 

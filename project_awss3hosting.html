@@ -100,20 +100,20 @@
 						<h4>4. The Permission Puzzle (The "Bucket Policy")</h4>
 						<p>Here's the catch: even with public access "unblocked," S3 is still a bit shy. It won't show your files until you give it a specific "okay." Go to the Permissions tab and paste in 
 							this JSON policy.</p>
-						<p>It basically tells AWS: "It's cool, let anyone on the internet look at the files in this specific bucket."</p>
+						It basically tells AWS: "It's cool, let anyone on the internet look at the files in this specific bucket."
 
 						<pre><code>
-						{
-   						"Version": "2012-10-17",
-    						"Statement": [
-        					{
-           					"Sid": "PublicReadGetObject",
-            					"Effect": "Allow", 
-            					"Action": "s3:GetObject",
-            					"Resource": "arn:aws:s3:::jonathanlayman.com/*"
-    		    				}
-   		 			]						
-				}</code></pre>
+{
+"Version": "2012-10-17",
+"Statement": [
+   {
+   "Sid": "PublicReadGetObject",
+   "Effect": "Allow", 
+   "Action": "s3:GetObject",
+   "Resource": "arn:aws:s3:::jonathanlayman.com/*"
+    }
+  ]						
+}</code></pre>
 
 						<strong>Quick tip:</strong> Don't forget to swap out <code>jonathanlayman.com</code> with your actual bucket name!
 
