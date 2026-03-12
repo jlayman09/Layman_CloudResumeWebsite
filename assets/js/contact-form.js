@@ -7,6 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // honeypot check
+    if (document.getElementById("company").value !== "") {
+  return;
+  }
+
+
     const payload = {
       name: document.getElementById("name").value.trim(),
       email: document.getElementById("email").value.trim(),

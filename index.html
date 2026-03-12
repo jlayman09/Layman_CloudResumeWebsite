@@ -298,23 +298,32 @@
 								<section>
 									<form id="contact-form">
 										<div class="row gtr-50">
+
 										<div class="col-6 col-12-small">
 											<input id="name" name="name" placeholder="Name" type="text" required />
 										</div>
+
 										<div class="col-6 col-12-small">
 											<input id="email" name="email" placeholder="Email" type="email" required />
 										</div>
+
 										<div class="col-12">
 											<textarea id="message" name="message" placeholder="Message" required></textarea>
 										</div>
+
+										<!-- Honeypot spam trap -->
+										<input type="text" name="company" id="company" style="display:none">
+
 										<div class="col-12">
 											<button type="submit" class="form-button-submit button icon solid fa-envelope">
 											Send Message
 											</button>
 										</div>
+
 										<div class="col-12">
 											<p id="contact-status"></p>
 										</div>
+
 										</div>
 									</form>
 								</section>
@@ -326,11 +335,13 @@
 										<div class="col-6 col-12-small">
 											<ul class="icons">
 												<li class="icon brands fa-linkedin">
-													<a href="https://www.linkedin.com/in/jonathanlayman/">linkedin.com/in/jonathanlayman</a>
+													<a href="https://www.linkedin.com/in/jonathanlayman/" target="_blank" rel="noopener noreferrer">
+														linkedin.com/in/jonathanlayman
+													</a>
 												</li>
-												<li class="icon solid fa-envelope">
-												<a href="mailto:JLayman09@gmail.com">JLayman09@gmail.com</a>
-												</li>
+												<!--<li class="icon solid fa-envelope">
+												<a href=""></a>
+												</li>-->
 											</ul>
 										</div>
 									</div>
