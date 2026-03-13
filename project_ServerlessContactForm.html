@@ -53,95 +53,18 @@
 				<article class="post">
 					<header>
 						<div class="title">
-							<h2>Automating Deployments with GitHub CI/CD</h2>
-							<p>Part 5 of the AWS Cloud Resume Challenge</p>
-							<time class="published">January 28, 2026</time>
+							<h2>Building a Serverless Contact Form with Lambda and API Gateway</h2>
+							<p>Part 9 of the AWS Cloud Resume Challenge.</p>
+							<time class="published">March  12, 2026</time>
 						</div>
 					</header>
 					<section class="project">
-						<p>After deploying my website to Amazon S3 and securing it with CloudFront and HTTPS, the site was publicly accessible and performing well. However, the deployment process itself was still manual. Every time I updated my resume, fixed a typo, or changed a line of CSS, I had to manually upload files through the AWS Console.</p>
-
-						<p>While this works for small experiments, it quickly becomes inefficient and introduces unnecessary risk. Manual uploads can easily overwrite the wrong files, forget updates, or create inconsistencies between local code and the deployed version.</p>
-
-						<p>To solve this problem, I implemented an automated CI/CD deployment pipeline using GitHub and AWS CodePipeline. This allows any changes pushed to my GitHub repository to automatically deploy to my S3 website hosting bucket.</p>
-
-						<p>This approach reflects how modern cloud environments operate. Instead of manually updating infrastructure or applications, deployments are automated through version-controlled pipelines.</p>
-
-						<h3>Step 1 - Moving the Website into Version Control</h3>
-						<p>The first step was placing the website source code under version control using GitHub. I created a repository and uploaded all of the files used to build the site, including:</p>
-						<ul>
-							<li>HTML pages</li>
-							<li>CSS stylesheets</li>
-							<li>JavaScript files</li>
-							<li>Images and static assets</li>
-						</ul>
-						<p>By storing the project in GitHub, the repository becomes the single source of truth for the website. Every change is tracked through commits, making it easy to review the history of the project and revert changes if necessary.</p>
-						<p>Version control is also an essential component of CI/CD pipelines because deployment systems need a centralized location from which to pull source code.</p>
-
-						<!-- IMAGE 1 -->
-						<img src="images/P5_Img1_RepoStructure.png" width="640" height="341" alt="GitHub repository showing the website source code and project file structure." />
-						<em>GitHub repository showing the website source code and project file structure.</em>
-
-						<h3>Step 2 - Creating the Deployment Pipeline</h3>
-						<p>Once the repository was established, the next step was creating an automated deployment pipeline using AWS CodePipeline.</p>
-						<p>CodePipeline is a fully managed AWS service that automates the process of building, testing, and deploying applications. For this project, I configured a simple pipeline with two stages:</p>
-						<ul>
-							<li>Source Stage</li>
-							<li>Deploy Stage</li>
-						</ul>
-						<p>The Source stage connects directly to the GitHub repository. Whenever new code is pushed to the main branch, CodePipeline automatically detects the change and starts a new pipeline execution.</p>
-						<p>The Deploy stage takes the updated files from the repository and synchronizes them with the S3 bucket hosting the website.</p>
-						<p>This allows the entire deployment process to run automatically without requiring any manual uploads.</p>
-
-						<!-- IMAGE 2 -->
-						<img src="images/P5_Img2_CodePipeline.png" width="640" height="341" alt="AWS CodePipeline pipeline view showing the Source and Deploy stages connected to the GitHub repository." />
-						<em>AWS CodePipeline pipeline view showing the Source and Deploy stages connected to the GitHub repository.</em>
-
-						<h3>Step 3 - Deploying Updates to the S3 Website Bucket</h3>
-						<p>During the deploy stage, CodePipeline updates the S3 bucket containing the static website files.</p>
-						<p>When new code is pushed to GitHub:</p>
-						<ul>
-							<li>CodePipeline detects the repository change</li>
-							<li>The pipeline downloads the latest version of the repository</li>
-							<li>Updated files are uploaded to the S3 bucket hosting the website</li>
-						</ul>
-						<p>This ensures the contents of the S3 bucket always match the latest version of the GitHub repository.</p>
-						<p>Because the website is delivered through CloudFront, the updated files become available globally once the distribution refreshes its cache.</p>
-						<p>The entire deployment process now happens automatically whenever changes are pushed to GitHub.</p>
-
-						<h3>Step 4 - Testing the Deployment Pipeline</h3>
-						<p>To confirm that the pipeline was working correctly, I made a small change to the website and pushed the update to the GitHub repository.</p>
-						<p>Immediately after the commit was pushed, CodePipeline automatically triggered a new pipeline execution. The AWS console allowed me to watch the deployment process in real time.</p>
-						<p>Once the pipeline completed successfully, the updated files were already deployed to the S3 bucket and served through CloudFront.</p>
-						<p>Refreshing the website confirmed that the changes were live.</p>
-
-						<!-- IMAGE 3 - CodePipeline Executions -->
-						<img src="images/P5_Img3_PipelineExecutions.png" width="640" alt="AWS CodePipeline executions showing successful automated deployments triggered by GitHub commits." />
-						<em>CodePipeline execution history showing successful automated deployments triggered by GitHub commits.</em>
-
-						<h3>Lessons Learned</h3>
-						<p>This stage of the project highlighted an important principle in modern cloud development: automation reduces risk and improves consistency.</p>
-						<p>Before implementing CI/CD, every deployment required manually uploading files through the AWS Console. While this method works for small changes, it introduces opportunities for mistakes and slows down the development process.</p>
-						<p>Automating deployments through CodePipeline ensures that:</p>
-						<ul>
-							<li>The GitHub repository remains the authoritative version of the website</li>
-							<li>Deployments happen consistently every time code is updated</li>
-							<li>The risk of human error during manual uploads is eliminated</li>
-						</ul>
-						<p>Another important lesson was understanding how AWS services integrate together. By connecting GitHub, CodePipeline, S3, and CloudFront, the website now has a fully automated deployment pipeline similar to what many production environments use.</p>
-
-						<h3>The Result</h3>
-						<p>The website now has a fully automated deployment workflow.</p>
-						<p>Whenever I push updates to GitHub:</p>
-						<p><code>GitHub Repository → AWS CodePipeline detects the change → CodePipeline deploys the update to S3 → CloudFront serves the updated website globally</code></p>
-						<p>This process allows me to update the site quickly and confidently without manually interacting with the AWS console.</p>
-
-						<h3>What's Next</h3>
-						<p>With the deployment process automated, the next step is focusing on cost visibility and monitoring.</p>
-						<p>Even though most of the services used in this project fall within the AWS Free Tier, monitoring cloud costs early is an important habit for anyone working in cloud engineering.</p>
-						<p>In the next post, I will configure AWS Budgets and cost alerts to ensure the infrastructure stays within safe spending limits as the project continues to grow.</p>
-						</br>
-						<strong>Next Up:</strong> <a href="project_costoptimization.html">Cost Optimization - Setting Up My AWS Safety Net</a>
+						<!--<a href="Project.html" class="image featured"><img src="images/Project_HTML_Img.png" width="840" height="341" alt="HTLM code" /></a>-->
+						<strong>Frontend Website Code: </strong><a href="https://github.com/jlayman09/Layman_CloudResumeWebsite" target="_blank">  https://github.com/jlayman09/Layman_CloudResumeWebsite</a><br>
+						<strong>Backend Serverless Code (Lambda + DynamoDB): </strong><a href="https://github.com/jlayman09/cloud-resume-backend" target="_blank">  https://github.com/jlayman09/cloud-resume-backend</a><br>
+                        <strong>Serverless Contact Form API (Terraform + Lambda):</strong><a href="https://github.com/jlayman09/cloud-resume-contact-api" target="_blank"> https://github.com/jlayman09/cloud-resume-contact-api</a>
+						<br><br>
+						
 					</section>
 				</article>
 			<!-- Post -->
@@ -292,7 +215,7 @@
 											<a href="project_terraform.html" class="image"><img src="images/TerraformLogo.png" alt="Terraform Logo" /></a>
 										</article>
 									</li>
-									<li>
+                                    <li>
 										<article>
 											<header>
 												<h3><a href="project_ServerlessContactForm.html">Serverless Contact Form</a></h3>
