@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   return;
   }
 
-
     const payload = {
       name: document.getElementById("name").value.trim(),
       email: document.getElementById("email").value.trim(),

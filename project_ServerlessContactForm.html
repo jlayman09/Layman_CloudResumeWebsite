@@ -53,7 +53,7 @@
 				<article class="post">
 					<header>
 						<div class="title">
-							<h2>Building a Serverless Contact Form with Lambda and API Gateway</h2>
+							<h2>Building a Serverless Contact Form with Terraform</h2>
 							<p>Part 9 of the AWS Cloud Resume Challenge.</p>
 							<time class="published">March  12, 2026</time>
 						</div>
@@ -64,7 +64,120 @@
 						<strong>Backend Serverless Code (Lambda + DynamoDB): </strong><a href="https://github.com/jlayman09/cloud-resume-backend" target="_blank">  https://github.com/jlayman09/cloud-resume-backend</a><br>
                         <strong>Serverless Contact Form API (Terraform + Lambda):</strong><a href="https://github.com/jlayman09/cloud-resume-contact-api" target="_blank"> https://github.com/jlayman09/cloud-resume-contact-api</a>
 						<br><br>
+						<p>After migrating my existing infrastructure to Terraform, the final piece of the Cloud Resume Challenge was to add a dynamic feature that demonstrated a complete, end-to-end serverless workflow: a contact form. While many websites use third-party services for this, building my own was a perfect opportunity to dive deeper into API Gateway, Lambda, and IAM, all managed through Infrastructure as Code.</p>
+						<p>The goal was to create a form that could take a visitor's name, email, and message, and securely deliver it to me without managing a single server. This required building a backend API from scratch using Terraform, connecting it to a Lambda function for processing, and integrating it with the frontend JavaScript.</p>
 						
+						<img src="images/contact-form-architecture.png" alt="Serverless contact form architecture diagram" />
+						<em>High-level architecture of the serverless contact form.</em>
+
+						<h3>The Architecture</h3>
+						The final workflow follows a classic serverless pattern:
+						<ol>
+							<li>A visitor fills out the contact form on the website.</li>
+							<li>Frontend JavaScript sends the form data as a <code>POST</code> request to an API Gateway endpoint.</li>
+							<li>API Gateway triggers a Lambda function, passing the request data along.</li>
+							<li>The Lambda function validates the data, formats it into an email, and uses AWS Simple Email Service (SES) to send it.</li>
+							<li>The function returns a success or error response, which the frontend JavaScript displays to the user.</li>
+						</ol>
+
+						<h3>Step 1: Structuring the Terraform Project</h3>
+						<p>To keep the new infrastructure isolated from the existing visitor counter backend, I created a dedicated Terraform project for the contact form. This separation prevents accidental changes to other parts of the site and makes the new components easier to manage.</p>
+						I organized the configuration into multiple files, which is a best practice that improves readability and maintainability:
+<pre><code>provider.tf
+variables.tf
+main.tf
+iam.tf
+lambda.tf
+apigateway.tf
+outputs.tf</code></pre>
+						<img src="images/terraform-folder-structure.png" alt="Terraform folder structure in VS Code" style="width: 300px;" />
+						<em>The Terraform project was organized into separate files for clarity and maintenance.</em>
+
+						<h3>Step 2: Initializing the Terraform Workflow</h3>
+						<p>With the file structure in place, the first step in any Terraform workflow is configuring the provider and initializing the project. The provider block tells Terraform that we'll be working with AWS resources.</p>
+						<p>After running <code>terraform init</code> to download the necessary provider plugins, my workflow for any change followed a strict cycle:</p>
+<pre><code># 1. Format the code for consistency
+terraform fmt
+
+# 2. Validate the syntax
+terraform validate
+
+# 3. Review the execution plan
+terraform plan
+
+# 4. Apply the changes
+terraform apply</code></pre>
+						Sticking to this `plan -> review -> apply` cycle is critical. It ensures there are no surprises and that I know exactly what infrastructure changes will be made before they happen.
+
+						<h3>Step 3: Securing the Backend with an IAM Role</h3>
+						<p>Following the principle of least privilege, the Lambda function needed an execution role with only the permissions required to do its job. I defined an IAM role in Terraform that granted the function two key capabilities:</p>
+						<ul>
+							<li>The ability to write logs to Amazon CloudWatch for debugging.</li>
+							<li>Permission to send emails using Amazon Simple Email Service (SES).</li>
+						</ul>
+						<p>The role's trust policy was configured to allow only the Lambda service to assume it, ensuring no other entity could use its permissions.</p>
+						<img src="images/lambda-iam-role.png" alt="Lambda IAM execution role defined in Terraform" />
+						<em>The IAM role grants the Lambda function least-privilege permissions for logging and sending email.</em>
+                        <figure>
+                            <img src="images/lambda-trust-relationship.png" alt="Lambda IAM trust relationship allowing the Lambda service to assume the execution role">
+                            <figcaption>
+                                IAM trust relationship allowing the AWS Lambda service to assume the execution role using <code>sts:AssumeRole</code>.
+                            </figcaption>
+                        </figure>
+
+						<h3>Step 4: Building the Lambda Function</h3>
+						<p>The Lambda function contains the Python code that runs when a visitor submits the form. Its job is to:</p>
+						<ul>
+							<li>Receive the request body from API Gateway.</li>
+							<li>Read and validate the name, email, and message fields.</li>
+							<li>Format the data into a clean, readable email.</li>
+							<li>Use the Boto3 SDK to send the email via SES.</li>
+							<li>Return a JSON response to the frontend indicating success or failure.</li>
+						</ul>
+						After writing the function, I packaged it into a .zip archive that Terraform could deploy.
+						<img src="images/lambda-overview.png" alt="AWS Lambda function overview in the AWS console" />
+						<em>The deployed Lambda function, ready to be triggered by API Gateway.</em>
+
+						<h3>Step 5: Creating the API Gateway Endpoint</h3>
+						<p>With the backend logic in place, the website needed a public endpoint to send requests to. I used API Gateway to create an HTTP API with a single <code>/contact</code> route that accepts <code>POST</code> requests. This route was then integrated with the Lambda function, so any request to the endpoint would trigger the function.</p>
+						<img src="images/api-gateway-route.png" alt="API Gateway POST route and stage" style="width: 300px;" />
+						<em>The API Gateway route configuration, which forwards POST requests to the Lambda function.</em>
+
+						<h3>Step 6: Configuring CORS</h3>
+						<p>Because the browser sends a request from my domain (<code>jonathanlayman.com</code>) to the API Gateway domain, I had to configure Cross-Origin Resource Sharing (CORS). Without the correct CORS headers, the browser's security policy would block the request. I configured the API in Terraform to explicitly allow <code>POST</code> requests from my website's origin.</p>
+
+						<h3>Step 7: Deploying the Infrastructure with Terraform</h3>
+						<p>Once all the Terraform files were defined, deploying the entire backend was as simple as running one command:</p>
+<pre><code>terraform apply</code></pre>
+						<p>Terraform automatically provisioned the IAM role, Lambda function, and API Gateway, including all the necessary permissions and integrations.</p>
+						<img src="images/terraform-apply-success.png" alt="Successful terraform apply output in the terminal" />
+						<em>Terraform's output after successfully creating all the AWS resources.</em>
+
+						<h3>Step 8: Connecting the Frontend Form to the API</h3>
+						<p>The final step was updating the website's JavaScript. I wrote a script that:</p>
+						<ul>
+							<li>Listens for the contact form's `submit` event.</li>
+							<li>Prevents the default browser submission.</li>
+							<li>Captures the form values and builds a JSON payload.</li>
+							<li>Sends a <code>POST</code> request to the API Gateway endpoint using the Fetch API.</li>
+							<li>Displays a success or error message to the user based on the API's response.</li>
+						</ul>
+						<img src="images/contact-form-javascript.png" alt="Frontend JavaScript for contact form submission" />
+						<em>The JavaScript code responsible for sending form data to the backend API.</em>
+
+						<h3>Step 9: Testing the Full Workflow</h3>
+						<p>With both the frontend and backend deployed, I tested the entire flow by submitting a message from the live site. The form submission was successful, and the message arrived in my inbox moments later.</p>
+						<img src="images/contact-form-success.png" alt="A success message displayed on the contact form after submission" />
+						<em>The success message displayed to the user after the form is submitted.</em>
+
+						<h3>Step 10: Troubleshooting with CloudWatch Logs</h3>
+						<p>Throughout the process, Amazon CloudWatch Logs were essential for debugging. Whenever the form failed, I could check the Lambda function's logs to see the exact request data it received and identify any runtime errors in the Python code. This made it easy to troubleshoot issues like incorrect IAM permissions or data validation errors.</p>
+						<img src="images/cloudwatch-contact-form-logs.png" alt="CloudWatch logs showing a successful execution of the contact form Lambda" />
+						<em>CloudWatch logs provided real-time visibility into the Lambda function's execution.</em>
+
+						<h3>Conclusion and Lessons Learned</h3>
+						<p>Building the serverless contact form was the perfect capstone for the Cloud Resume Challenge. It tied together nearly every concept from the previous stages: frontend development, backend logic, infrastructure as code, and security. The final result is a fully functional, automated, and serverless feature that enhances the website without adding operational overhead.</p>
+						<p>The biggest challenges were not in writing the code itself, but in managing the integrations between services. Debugging IAM policies, configuring CORS headers, and ensuring the data format was consistent from the browser all the way to Lambda were critical hurdles. Working through them provided invaluable hands-on experience that goes far beyond what can be learned from documentation alone. With this final piece in place, the entire website and its backend services are now managed as code, making the project resilient, repeatable, and easy to extend in the future.</p>
 					</section>
 				</article>
 			<!-- Post -->
