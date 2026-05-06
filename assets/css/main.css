@@ -2278,7 +2278,6 @@ input, select, textarea {
 article.resume  {
 	margin: 0 0 1.25em 0;
 	border: none !important;
-	padding-top: 10ex;
 }
 
 article.resume .image.featured {
@@ -3251,7 +3250,7 @@ article.resume .education-entry .education-text p {
 		.post {
 			left: 0;
 			width: 100%;
-			padding: none;
+			padding: 0;
 
 		}
 		
